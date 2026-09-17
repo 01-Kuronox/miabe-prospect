@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+:root {
+  --color-brand-yellow: #FFC400;
+  --color-brand-yellow-dark: #E6B000;
+  --color-brand-blue: #0B2545;
+  --color-brand-blue-light: #13385E;
+  --color-brand-gray: #F4F6F8;
+}
+
+body {
+  background-color: var(--color-brand-gray);
+  color: var(--color-brand-blue);
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+/* petite scrollbar plus discrète */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+/* --- Animation de l'écran d'accueil (SplashScreen) --- */
+
+/* Effet "construction du logo" : chaque trait se dessine progressivement.
+   Grâce à pathLength="1" sur le SVG, stroke-dasharray/dashoffset vont
+   toujours de 0 à 1, quelle que soit la longueur réelle du tracé — donc ça
+   marche automatiquement même si le vrai logo de l'équipe a une forme
+   totalement différente. */
+.logo-path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw-path 0.5s ease-out forwards;
+}
+
+@keyframes draw-path {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Apparition en fondu + léger décalage vers le haut, pour le nom de la
+   marque et pour une éventuelle image de logo statique. */
+.logo-text-reveal {
+  opacity: 0;
+  transform: translateY(8px);
+  animation: reveal-up 0.7s ease-out forwards;
+  animation-delay: 2.1s;
+}
+
+.logo-fade-in {
+  opacity: 0;
+  animation: reveal-up 0.7s ease-out forwards;
+}
+
+@keyframes reveal-up {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
