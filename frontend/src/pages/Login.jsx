@@ -1,4 +1,19 @@
 import { useState } from "react";
+import {
+  Target,
+  BadgeCheck,
+  Send,
+  BellRing,
+  Trophy,
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  Building2,
+  Briefcase,
+  ArrowRight,
+  ShieldCheck,
+} from "lucide-react";
 import { useAuth } from "../AuthContext";
 import { BRAND } from "../brand";
 
@@ -16,16 +31,16 @@ const SECTORS = [
 ];
 
 const FEATURES = [
-  { icon: "🎯", title: "Identifier", text: "Trouvez les bonnes cibles" },
-  { icon: "✅", title: "Qualifier", text: "Évaluez leur pertinence" },
-  { icon: "📣", title: "Prospecter", text: "Contactez-les facilement" },
-  { icon: "🔔", title: "Relancer", text: "Ne laissez plus filer une opportunité" },
-  { icon: "🏆", title: "Convertir", text: "Transformez et classez vos prospects" },
+  { Icon: Target, tint: "blue", title: "Identifier", text: "Trouvez les bonnes cibles" },
+  { Icon: BadgeCheck, tint: "violet", title: "Qualifier", text: "Évaluez leur pertinence" },
+  { Icon: Send, tint: "emerald", title: "Prospecter", text: "Contactez-les facilement" },
+  { Icon: BellRing, tint: "sky", title: "Relancer", text: "Ne ratez plus une opportunité" },
+  { Icon: Trophy, tint: "amber", title: "Convertir", text: "Transformez vos prospects" },
 ];
 
 export default function Login() {
   const { login, register } = useAuth();
-  const [mode, setMode] = useState("login"); // "login" | "register"
+  const [mode, setMode] = useState("login");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -37,9 +52,7 @@ export default function Login() {
     password: "",
   });
 
-  function update(field, value) {
-    setForm((f) => ({ ...f, [field]: value }));
-  }
+  const update = (field, value) => setForm((f) => ({ ...f, [field]: value }));
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -63,170 +76,194 @@ export default function Login() {
     }
   }
 
+  const inputClass =
+    "w-full rounded-xl border border-[var(--border-soft)] bg-white py-3 pl-11 pr-4 text-sm text-slate-800 placeholder:text-slate-400 transition-shadow focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-blue)]/15 focus:border-[var(--color-brand-blue)]/30";
+
   return (
-    <div className="min-h-screen grid lg:grid-cols-2 bg-white">
-      {/* Panneau gauche : présentation / pitch — masqué sur mobile */}
-      <div className="hidden lg:flex flex-col justify-between bg-[var(--color-brand-blue)] text-white px-14 py-12 relative overflow-hidden">
-        {/* halo décoratif discret, dans le ton de la marque */}
-        <div className="pointer-events-none absolute -top-24 -right-24 h-80 w-80 rounded-full bg-[var(--color-brand-yellow)]/10 blur-3xl" />
-        <div className="pointer-events-none absolute bottom-0 left-0 h-64 w-64 rounded-full bg-[var(--color-brand-yellow)]/5 blur-3xl" />
+    <div className="min-h-screen grid lg:grid-cols-[1.05fr_1fr]">
+      {/* ---------- Panneau gauche : présentation ---------- */}
+      <div className="relative hidden lg:flex flex-col justify-between overflow-hidden bg-[var(--color-brand-blue)] px-14 py-12 text-white">
+        <div className="pointer-events-none absolute -right-28 -top-28 h-96 w-96 rounded-full bg-[var(--color-brand-yellow)]/[0.07] blur-3xl" />
+        <div className="pointer-events-none absolute -left-24 bottom-0 h-80 w-80 rounded-full bg-white/[0.04] blur-3xl" />
 
         <div className="relative flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <img src={BRAND.logoIcon} alt={BRAND.name} className="h-10 w-10 rounded-lg" />
-            <p className="font-bold text-lg">{BRAND.name}</p>
+          <div className="flex items-center gap-3">
+            <img src={BRAND.logoIcon} alt={BRAND.name} className="h-11 w-11 rounded-xl" />
+            <p className="text-lg font-bold tracking-tight">{BRAND.name}</p>
           </div>
-          <span className="rounded-full border border-white/20 px-3 py-1 text-[11px] font-semibold tracking-wide text-white/70">
-            ESPACE COMMERCIAL
+          <span className="rounded-full border border-white/15 px-3.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-white/60">
+            Espace commercial
           </span>
         </div>
 
-        <div className="relative">
-          <h1 className="text-5xl font-black leading-[1.1] mb-6">
+        <div className="relative max-w-xl">
+          <h1 className="text-[42px] font-extrabold leading-[1.08] tracking-tight xl:text-5xl">
             Trouvez les bons{" "}
-            <span className="text-[var(--color-brand-yellow)]">prospects</span> sans
-            perdre de temps.
+            <span className="text-[var(--color-brand-yellow)]">prospects</span>
+            <br />
+            sans perdre de temps.
           </h1>
-          <p className="text-white/70 text-base leading-relaxed max-w-md mb-10">
+          <p className="mt-6 max-w-md text-[15px] leading-relaxed text-white/60">
             Notre intelligence artificielle vous aide à identifier, qualifier,
             prospecter, relancer puis convertir les prospects les plus pertinents
             pour votre activité.
           </p>
 
-          <div className="grid grid-cols-3 sm:grid-cols-5 gap-4">
-            {FEATURES.map((f) => (
-              <div key={f.title}>
-                <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-lg mb-2">
-                  {f.icon}
+          <div className="mt-12 grid grid-cols-5 gap-3">
+            {FEATURES.map(({ Icon, tint, title, text }) => (
+              <div key={title}>
+                <span
+                  className="icon-chip mb-3 h-11 w-11"
+                  style={{
+                    backgroundColor: `var(--tint-${tint}-bg)`,
+                    color: `var(--tint-${tint}-fg)`,
+                  }}
+                >
+                  <Icon size={19} strokeWidth={2.1} />
                 </span>
-                <p className="text-sm font-semibold">{f.title}</p>
-                <p className="text-[11px] text-white/50 leading-snug">{f.text}</p>
+                <p className="text-[13px] font-semibold">{title}</p>
+                <p className="mt-0.5 text-[11px] leading-snug text-white/40">{text}</p>
               </div>
             ))}
           </div>
         </div>
 
-        <p className="relative text-[11px] text-white/40">
+        <div className="relative flex items-center gap-2 text-[11px] text-white/35">
+          <ShieldCheck size={14} strokeWidth={2} />
           Chaque entreprise dispose de son propre espace privé et sécurisé.
-        </p>
+        </div>
       </div>
 
-      {/* Panneau droit : formulaire */}
-      <div className="flex flex-col items-center justify-center px-6 py-12 bg-[var(--color-brand-gray)]">
-        <div className="w-full max-w-sm">
-          {/* logo affiché seul sur mobile, puisque le panneau gauche est masqué */}
-          <div className="flex lg:hidden items-center gap-2 mb-8">
-            <img src={BRAND.logoIcon} alt={BRAND.name} className="h-10 w-10 rounded-lg" />
-            <p className="font-bold text-lg text-[var(--color-brand-blue)]">{BRAND.name}</p>
+      {/* ---------- Panneau droit : formulaire ---------- */}
+      <div className="app-surface flex items-center justify-center px-6 py-12">
+        <div className="w-full max-w-[380px]">
+          <div className="mb-10 flex items-center gap-3 lg:hidden">
+            <img src={BRAND.logoIcon} alt={BRAND.name} className="h-10 w-10 rounded-xl" />
+            <p className="text-lg font-bold text-[var(--color-brand-blue)]">{BRAND.name}</p>
           </div>
 
-          <div className="flex items-center justify-between mb-1">
-            <h2 className="text-2xl font-bold text-[var(--color-brand-blue)]">
-              {mode === "login" ? "Bon retour !" : "Créer un compte"}
-            </h2>
-          </div>
-          <p className="text-sm text-gray-500 mb-8">
-            {mode === "login" ? (
-              <>
-                Pas encore de compte ?{" "}
-                <button
-                  type="button"
-                  onClick={() => setMode("register")}
-                  className="font-semibold text-[var(--color-brand-blue)] hover:underline"
-                >
-                  Créer un compte
-                </button>
-              </>
-            ) : (
-              <>
-                Déjà inscrit ?{" "}
-                <button
-                  type="button"
-                  onClick={() => setMode("login")}
-                  className="font-semibold text-[var(--color-brand-blue)] hover:underline"
-                >
-                  Se connecter
-                </button>
-              </>
-            )}
+          <p className="mb-2 text-sm text-slate-500">
+            {mode === "login" ? "Pas encore de compte ?" : "Déjà inscrit ?"}{" "}
+            <button
+              type="button"
+              onClick={() => {
+                setMode(mode === "login" ? "register" : "login");
+                setError("");
+              }}
+              className="font-semibold text-[var(--color-brand-blue)] underline-offset-4 hover:underline"
+            >
+              {mode === "login" ? "Créer un compte" : "Se connecter"}
+            </button>
+          </p>
+
+          <h2 className="text-[34px] font-extrabold leading-tight tracking-tight text-[var(--color-brand-blue)]">
+            {mode === "login" ? "Bon retour !" : "Créer un compte"}
+          </h2>
+          <p className="mb-8 mt-2 text-sm leading-relaxed text-slate-500">
+            {mode === "login"
+              ? "Connectez-vous à votre espace pour accéder à votre tableau de bord."
+              : "Créez l'espace de votre entreprise en quelques secondes."}
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {mode === "register" && (
               <>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="mb-1.5 block text-[13px] font-medium text-slate-700">
                     Nom de l'entreprise
                   </label>
-                  <input
-                    required
-                    type="text"
-                    value={form.name}
-                    onChange={(e) => update("name", e.target.value)}
-                    className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-blue)]"
-                    placeholder="Ex : Nova Digital"
-                  />
+                  <div className="relative">
+                    <Building2
+                      size={17}
+                      className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                    />
+                    <input
+                      required
+                      type="text"
+                      value={form.name}
+                      onChange={(e) => update("name", e.target.value)}
+                      className={inputClass}
+                      placeholder="Ex : Nova Digital"
+                    />
+                  </div>
                 </div>
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="mb-1.5 block text-[13px] font-medium text-slate-700">
                     Secteur d'activité
                   </label>
-                  <select
-                    value={form.sector}
-                    onChange={(e) => update("sector", e.target.value)}
-                    className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-blue)]"
-                  >
-                    {SECTORS.map((s) => (
-                      <option key={s} value={s}>
-                        {s}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="relative">
+                    <Briefcase
+                      size={17}
+                      className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                    />
+                    <select
+                      value={form.sector}
+                      onChange={(e) => update("sector", e.target.value)}
+                      className={`${inputClass} appearance-none pr-10`}
+                    >
+                      {SECTORS.map((s) => (
+                        <option key={s} value={s}>
+                          {s}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
               </>
             )}
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="mb-1.5 block text-[13px] font-medium text-slate-700">
                 Adresse e-mail
               </label>
-              <input
-                required
-                type="email"
-                value={form.email}
-                onChange={(e) => update("email", e.target.value)}
-                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-blue)]"
-                placeholder="votre@email.com"
-              />
+              <div className="relative">
+                <Mail
+                  size={17}
+                  className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                />
+                <input
+                  required
+                  type="email"
+                  value={form.email}
+                  onChange={(e) => update("email", e.target.value)}
+                  className={inputClass}
+                  placeholder="votre@email.com"
+                />
+              </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="mb-1.5 block text-[13px] font-medium text-slate-700">
                 Mot de passe
               </label>
               <div className="relative">
+                <Lock
+                  size={17}
+                  className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                />
                 <input
                   required
                   type={showPassword ? "text" : "password"}
                   minLength={4}
                   value={form.password}
                   onChange={(e) => update("password", e.target.value)}
-                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-blue)]"
+                  className={`${inputClass} pr-11`}
                   placeholder="Votre mot de passe"
                 />
                 <button
                   type="button"
-                  onClick={() => setShowPassword((v) => !v)}
-                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-gray-400 hover:text-gray-600"
                   tabIndex={-1}
+                  onClick={() => setShowPassword((v) => !v)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 transition-colors hover:text-slate-600"
                 >
-                  {showPassword ? "🙈" : "👁"}
+                  {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
                 </button>
               </div>
             </div>
 
             {error && (
-              <p className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
+              <p className="rounded-xl border border-red-100 bg-red-50 px-4 py-2.5 text-[13px] text-red-600">
                 {error}
               </p>
             )}
@@ -234,19 +271,24 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-lg bg-[var(--color-brand-blue)] text-white font-semibold py-3 text-sm hover:opacity-90 transition-opacity disabled:opacity-60"
+              className="group flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--color-brand-blue)] py-3.5 text-sm font-semibold text-white shadow-[0_8px_20px_-8px_rgba(11,37,69,0.6)] transition-all hover:bg-[var(--color-brand-blue-light)] disabled:opacity-60"
             >
               {loading
-                ? "Veuillez patienter..."
+                ? "Veuillez patienter…"
                 : mode === "login"
                 ? "Se connecter"
                 : "Créer mon compte"}
+              {!loading && (
+                <ArrowRight
+                  size={16}
+                  className="transition-transform group-hover:translate-x-0.5"
+                />
+              )}
             </button>
           </form>
 
-          <p className="mt-8 text-center text-xs text-gray-400">
-            Chaque entreprise dispose de son propre espace : vos prospects, vos
-            offres et vos statistiques restent privés.
+          <p className="mt-8 text-center text-[11px] leading-relaxed text-slate-400">
+            Vos prospects, vos offres et vos statistiques restent strictement privés.
           </p>
         </div>
       </div>

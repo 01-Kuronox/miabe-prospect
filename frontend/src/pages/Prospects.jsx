@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { Search, Building2, SlidersHorizontal } from "lucide-react";
 import { api } from "../api";
 import { StatusBadge, PriorityBadge, ScorePill } from "../components/Badge";
 
@@ -40,23 +41,41 @@ export default function Prospects() {
   };
 
   return (
-    <div className="p-8 max-w-6xl">
-      <h1 className="text-2xl font-black text-[var(--color-brand-blue)] mb-1">Prospects</h1>
-      <p className="text-slate-500 text-sm mb-6">
-        Recherche, filtres et scoring — {prospects.length} résultat(s).
-      </p>
+    <div className="mx-auto max-w-6xl p-8 lg:p-10">
+      <div className="mb-7 flex items-start gap-3">
+        <span
+          className="icon-chip h-10 w-10"
+          style={{ backgroundColor: "var(--tint-blue-bg)", color: "var(--tint-blue-fg)" }}
+        >
+          <Building2 size={19} strokeWidth={2.1} />
+        </span>
+        <div>
+          <h1 className="text-[28px] font-extrabold leading-tight tracking-tight text-[var(--color-brand-blue)]">
+            Prospects
+          </h1>
+          <p className="mt-0.5 text-sm text-slate-500">
+            Recherche, filtres et scoring — {prospects.length} résultat(s).
+          </p>
+        </div>
+      </div>
 
       <form onSubmit={handleFilter} className="flex flex-wrap gap-3 mb-6">
-        <input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Rechercher une entreprise, un contact, un email…"
-          className="flex-1 min-w-[220px] rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-yellow)]"
-        />
+        <div className="relative min-w-[240px] flex-1">
+          <Search
+            size={16}
+            className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+          />
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Rechercher une entreprise, un contact, un email…"
+            className="w-full rounded-xl border border-[var(--border-soft)] bg-white py-2.5 pl-10 pr-4 text-sm placeholder:text-slate-400 focus:border-[var(--color-brand-blue)]/30 focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-blue)]/15"
+          />
+        </div>
         <select
           value={sector}
           onChange={(e) => setSector(e.target.value)}
-          className="rounded-lg border border-slate-200 px-3 py-2 text-sm"
+          className="rounded-xl border border-[var(--border-soft)] bg-white px-3.5 py-2.5 text-sm text-slate-700 focus:border-[var(--color-brand-blue)]/30 focus:outline-none"
         >
           <option value="">Tous les secteurs</option>
           {sectors.map((s) => (
@@ -66,7 +85,7 @@ export default function Prospects() {
         <select
           value={status}
           onChange={(e) => setStatus(e.target.value)}
-          className="rounded-lg border border-slate-200 px-3 py-2 text-sm"
+          className="rounded-xl border border-[var(--border-soft)] bg-white px-3.5 py-2.5 text-sm text-slate-700 focus:border-[var(--color-brand-blue)]/30 focus:outline-none"
         >
           <option value="">Tous les statuts</option>
           {STATUSES.map((s) => (
@@ -75,17 +94,18 @@ export default function Prospects() {
         </select>
         <button
           type="submit"
-          className="rounded-lg bg-[var(--color-brand-blue)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--color-brand-blue-light)]"
+          className="inline-flex items-center gap-2 rounded-xl bg-[var(--color-brand-blue)] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--color-brand-blue-light)]"
         >
+          <SlidersHorizontal size={15} strokeWidth={2.2} />
           Filtrer
         </button>
       </form>
 
       {error && <p className="text-red-600 text-sm mb-4">{error}</p>}
 
-      <div className="overflow-hidden rounded-xl border border-slate-100 bg-white shadow-sm">
+      <div className="card overflow-hidden">
         <table className="w-full text-sm">
-          <thead className="bg-[var(--color-brand-gray)] text-slate-500 text-xs uppercase">
+          <thead className="border-b border-[var(--border-soft)] bg-[var(--surface-muted)] text-[11px] uppercase tracking-wide text-slate-500">
             <tr>
               <th className="px-4 py-3 text-left">Entreprise</th>
               <th className="px-4 py-3 text-left">Secteur</th>
@@ -95,7 +115,7 @@ export default function Prospects() {
               <th className="px-4 py-3 text-left">Statut</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="divide-y divide-[var(--border-soft)]">
             {loading ? (
               <tr>
                 <td colSpan={6} className="px-4 py-6 text-center text-slate-400">
@@ -110,7 +130,7 @@ export default function Prospects() {
               </tr>
             ) : (
               prospects.map((p) => (
-                <tr key={p.id} className="hover:bg-[var(--color-brand-gray)]/60">
+                <tr key={p.id} className="transition-colors hover:bg-[var(--surface-muted)]">
                   <td className="px-4 py-3">
                     <Link
                       to={`/prospects/${p.id}`}

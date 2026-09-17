@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from "react";
+import { Sparkles, SendHorizontal, Bot } from "lucide-react";
 import { api } from "../api";
+import { BRAND } from "../brand";
 
 const SUGGESTIONS = [
   "Quels sont mes prospects prioritaires ?",
@@ -12,7 +14,7 @@ export default function Assistant() {
   const [messages, setMessages] = useState([
     {
       role: "assistant",
-      text: "Bonjour 👋 Je suis l'assistant IA de ProspectAI. Demande-moi tes prospects prioritaires, tes relances du jour, ou une analyse.",
+      text: `Bonjour, je suis l'assistant IA de ${BRAND.name}. Demandez-moi vos prospects prioritaires, vos relances du jour, ou une analyse.`,
     },
   ]);
   const [input, setInput] = useState("");
@@ -45,45 +47,89 @@ export default function Assistant() {
   };
 
   return (
-    <div className="p-8 max-w-3xl flex flex-col h-screen">
-      <h1 className="text-2xl font-black text-[var(--color-brand-blue)] mb-1">Assistant IA</h1>
-      <p className="text-slate-500 text-sm mb-4">
-        Pose une question sur tes prospects, tes relances ou demande une analyse.
-      </p>
+    <div className="mx-auto flex h-screen max-w-3xl flex-col p-8 lg:p-10">
+      <div className="mb-5 flex items-start gap-3">
+        <span
+          className="icon-chip h-10 w-10"
+          style={{
+            backgroundColor: "var(--tint-violet-bg)",
+            color: "var(--tint-violet-fg)",
+          }}
+        >
+          <Sparkles size={19} strokeWidth={2.1} />
+        </span>
+        <div>
+          <h1 className="text-[28px] font-extrabold leading-tight tracking-tight text-[var(--color-brand-blue)]">
+            Assistant IA
+          </h1>
+          <p className="mt-0.5 text-sm text-slate-500">
+            Posez une question sur vos prospects, vos relances, ou demandez une analyse.
+          </p>
+        </div>
+      </div>
 
-      <div className="flex flex-wrap gap-2 mb-4">
+      <div className="mb-4 flex flex-wrap gap-2">
         {SUGGESTIONS.map((s) => (
           <button
             key={s}
             onClick={() => send(s)}
-            className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-600 hover:border-[var(--color-brand-yellow)] hover:text-[var(--color-brand-blue)]"
+            className="rounded-full border border-[var(--border-soft)] bg-white px-3.5 py-1.5 text-xs font-medium text-slate-600 transition-colors hover:border-[var(--color-brand-blue)]/30 hover:text-[var(--color-brand-blue)]"
           >
             {s}
           </button>
         ))}
       </div>
 
-      <div className="flex-1 overflow-y-auto rounded-xl bg-white border border-slate-100 shadow-sm p-5 space-y-4 mb-4">
+      <div className="card mb-4 flex-1 space-y-4 overflow-y-auto p-5">
         {messages.map((m, i) => (
           <div
             key={i}
-            className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
+            className={`flex items-end gap-2.5 ${
+              m.role === "user" ? "justify-end" : "justify-start"
+            }`}
           >
+            {m.role === "assistant" && (
+              <span
+                className="icon-chip mb-0.5 h-8 w-8"
+                style={{
+                  backgroundColor: "var(--tint-violet-bg)",
+                  color: "var(--tint-violet-fg)",
+                }}
+              >
+                <Bot size={16} strokeWidth={2.1} />
+              </span>
+            )}
             <div
-              className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm whitespace-pre-wrap ${
+              className={`max-w-[78%] whitespace-pre-wrap rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
                 m.role === "user"
-                  ? "bg-[var(--color-brand-blue)] text-white rounded-br-sm"
-                  : "bg-[var(--color-brand-gray)] text-slate-700 rounded-bl-sm"
+                  ? "rounded-br-md bg-[var(--color-brand-blue)] text-white"
+                  : "rounded-bl-md bg-[var(--surface-muted)] text-slate-700"
               }`}
             >
               {m.text}
             </div>
           </div>
         ))}
+
         {loading && (
-          <div className="flex justify-start">
-            <div className="rounded-2xl bg-[var(--color-brand-gray)] px-4 py-2.5 text-sm text-slate-400">
-              L'assistant réfléchit…
+          <div className="flex items-end gap-2.5">
+            <span
+              className="icon-chip mb-0.5 h-8 w-8"
+              style={{
+                backgroundColor: "var(--tint-violet-bg)",
+                color: "var(--tint-violet-fg)",
+              }}
+            >
+              <Bot size={16} strokeWidth={2.1} />
+            </span>
+            <div className="flex items-center gap-1.5 rounded-2xl rounded-bl-md bg-[var(--surface-muted)] px-4 py-3">
+              {[0, 150, 300].map((delay) => (
+                <span
+                  key={delay}
+                  className="h-1.5 w-1.5 animate-bounce rounded-full bg-slate-400"
+                  style={{ animationDelay: `${delay}ms` }}
+                />
+              ))}
             </div>
           </div>
         )}
@@ -100,14 +146,15 @@ export default function Assistant() {
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Écris ta question…"
-          className="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-yellow)]"
+          placeholder="Écrivez votre question…"
+          className="flex-1 rounded-xl border border-[var(--border-soft)] bg-white px-4 py-3 text-sm placeholder:text-slate-400 focus:border-[var(--color-brand-blue)]/30 focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-blue)]/15"
         />
         <button
           type="submit"
-          disabled={loading}
-          className="rounded-lg bg-[var(--color-brand-yellow)] px-4 py-2 text-sm font-bold text-[var(--color-brand-blue)] hover:bg-[var(--color-brand-yellow-dark)] disabled:opacity-50"
+          disabled={loading || !input.trim()}
+          className="inline-flex items-center gap-2 rounded-xl bg-[var(--color-brand-blue)] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--color-brand-blue-light)] disabled:opacity-40"
         >
+          <SendHorizontal size={16} strokeWidth={2.2} />
           Envoyer
         </button>
       </form>

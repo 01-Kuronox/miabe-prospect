@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
+import { Brain, Mail, History, Copy, Check, ArrowLeft } from "lucide-react";
 import { api } from "../api";
 import { StatusBadge, PriorityBadge, ScorePill } from "../components/Badge";
 
@@ -137,8 +138,8 @@ export default function ProspectDetail() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
         {/* Colonne infos */}
         <div className="md:col-span-1 space-y-6">
-          <div className="rounded-xl bg-white border border-slate-100 shadow-sm p-5">
-            <h2 className="font-bold text-[var(--color-brand-blue)] mb-3">Informations</h2>
+          <div className="card p-5">
+            <h2 className="mb-3 font-bold tracking-tight text-[var(--color-brand-blue)]">Informations</h2>
             <dl className="text-sm space-y-2">
               <div className="flex justify-between"><dt className="text-slate-500">Contact</dt><dd>{prospect.contact_name || "—"}</dd></div>
               <div className="flex justify-between"><dt className="text-slate-500">Fonction</dt><dd>{prospect.contact_role || "—"}</dd></div>
@@ -150,8 +151,8 @@ export default function ProspectDetail() {
             </dl>
           </div>
 
-          <div className="rounded-xl bg-white border border-slate-100 shadow-sm p-5">
-            <h2 className="font-bold text-[var(--color-brand-blue)] mb-3">Statut du pipeline</h2>
+          <div className="card p-5">
+            <h2 className="mb-3 font-bold tracking-tight text-[var(--color-brand-blue)]">Statut du pipeline</h2>
             <StatusBadge status={prospect.status} />
             <select
               value={prospect.status}
@@ -164,8 +165,8 @@ export default function ProspectDetail() {
             </select>
           </div>
 
-          <div className="rounded-xl bg-white border border-slate-100 shadow-sm p-5">
-            <h2 className="font-bold text-[var(--color-brand-blue)] mb-3">Programmer une relance</h2>
+          <div className="card p-5">
+            <h2 className="mb-3 font-bold tracking-tight text-[var(--color-brand-blue)]">Programmer une relance</h2>
             <form onSubmit={handleScheduleFollowUp} className="space-y-2">
               <input
                 type="date"
@@ -186,9 +187,12 @@ export default function ProspectDetail() {
 
         {/* Colonne IA */}
         <div className="md:col-span-2 space-y-6">
-          <div className="rounded-xl bg-white border border-slate-100 shadow-sm p-5">
+          <div className="card p-5">
             <div className="flex items-center justify-between mb-3">
-              <h2 className="font-bold text-[var(--color-brand-blue)]">🧠 Analyse IA</h2>
+              <h2 className="flex items-center gap-2 font-bold tracking-tight text-[var(--color-brand-blue)]">
+                <Brain size={17} strokeWidth={2.1} className="text-[var(--tint-violet-fg)]" />
+                Analyse IA
+              </h2>
               <button
                 onClick={handleAnalyze}
                 disabled={analyzing}
@@ -213,7 +217,7 @@ export default function ProspectDetail() {
                   {reasons.map((r, i) => <li key={i}>{r}</li>)}
                 </ul>
                 <p className="text-xs uppercase text-slate-400 font-semibold mb-1">Recommandation</p>
-                <p className="text-sm bg-[var(--color-brand-gray)] rounded-lg p-3">
+                <p className="text-sm rounded-xl bg-[var(--surface-muted)] p-3">
                   {lastAnalysis.recommendation}
                 </p>
                 {prospect.status === "Nouveau" && (
@@ -222,7 +226,14 @@ export default function ProspectDetail() {
                     disabled={qualifying}
                     className="mt-3 rounded-lg bg-[var(--color-brand-blue)] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[var(--color-brand-blue-light)] disabled:opacity-50"
                   >
-                    {qualifying ? "…" : "✓ Suivre la recommandation : Qualifier ce prospect"}
+                    {qualifying ? (
+                      "…"
+                    ) : (
+                      <span className="inline-flex items-center gap-1.5">
+                        <Check size={14} strokeWidth={2.4} />
+                        Suivre la recommandation : qualifier ce prospect
+                      </span>
+                    )}
                   </button>
                 )}
                 <p className="mt-3 text-[11px] text-slate-400">
@@ -232,8 +243,11 @@ export default function ProspectDetail() {
             )}
           </div>
 
-          <div className="rounded-xl bg-white border border-slate-100 shadow-sm p-5">
-            <h2 className="font-bold text-[var(--color-brand-blue)] mb-3">✉️ Générer un message</h2>
+          <div className="card p-5">
+            <h2 className="mb-3 flex items-center gap-2 font-bold tracking-tight text-[var(--color-brand-blue)]">
+              <Mail size={17} strokeWidth={2.1} className="text-[var(--tint-sky-fg)]" />
+              Générer un message
+            </h2>
             <p className="text-xs text-slate-400 mb-3">
               L'IA propose un brouillon — relis-le et modifie-le avant de l'envoyer.
             </p>
@@ -280,14 +294,20 @@ export default function ProspectDetail() {
                   onClick={handleCopyMessage}
                   className="mt-2 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:border-[var(--color-brand-blue)] hover:text-[var(--color-brand-blue)]"
                 >
-                  {copied ? "✓ Copié" : "📋 Copier le message"}
+                  <span className="inline-flex items-center gap-1.5">
+                    {copied ? <Check size={14} strokeWidth={2.4} /> : <Copy size={14} strokeWidth={2.2} />}
+                    {copied ? "Copié" : "Copier le message"}
+                  </span>
                 </button>
               </>
             )}
           </div>
 
-          <div className="rounded-xl bg-white border border-slate-100 shadow-sm p-5">
-            <h2 className="font-bold text-[var(--color-brand-blue)] mb-3">🕓 Historique des interactions</h2>
+          <div className="card p-5">
+            <h2 className="mb-3 flex items-center gap-2 font-bold tracking-tight text-[var(--color-brand-blue)]">
+              <History size={17} strokeWidth={2.1} className="text-slate-400" />
+              Historique des interactions
+            </h2>
             {activities.length === 0 ? (
               <p className="text-sm text-slate-500">Aucune interaction enregistrée.</p>
             ) : (

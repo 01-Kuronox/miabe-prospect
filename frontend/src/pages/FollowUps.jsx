@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { BellRing } from "lucide-react";
 import { api } from "../api";
 
 export default function FollowUps() {
@@ -40,11 +41,23 @@ export default function FollowUps() {
   const today = new Date().toISOString().slice(0, 10);
 
   return (
-    <div className="p-8 max-w-4xl">
-      <h1 className="text-2xl font-black text-[var(--color-brand-blue)] mb-1">Relances</h1>
-      <p className="text-slate-500 text-sm mb-6">
-        Relances passées, actuelles et futures.
-      </p>
+    <div className="mx-auto max-w-4xl p-8 lg:p-10">
+      <div className="mb-7 flex items-start gap-3">
+        <span
+          className="icon-chip h-10 w-10"
+          style={{ backgroundColor: "var(--tint-amber-bg)", color: "var(--tint-amber-fg)" }}
+        >
+          <BellRing size={19} strokeWidth={2.1} />
+        </span>
+        <div>
+          <h1 className="text-[28px] font-extrabold leading-tight tracking-tight text-[var(--color-brand-blue)]">
+            Relances
+          </h1>
+          <p className="mt-0.5 text-sm text-slate-500">
+            Relances passées, actuelles et futures.
+          </p>
+        </div>
+      </div>
 
       {followUps.length === 0 ? (
         <p className="text-sm text-slate-500">

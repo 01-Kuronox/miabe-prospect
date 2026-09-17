@@ -1,17 +1,63 @@
 @import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap");
 
 :root {
+  /* Identité de marque */
   --color-brand-yellow: #FFC400;
   --color-brand-yellow-dark: #E6B000;
   --color-brand-blue: #0B2545;
   --color-brand-blue-light: #13385E;
   --color-brand-gray: #F4F6F8;
+
+  /* Surfaces et bordures (design system) */
+  --surface: #FFFFFF;
+  --surface-muted: #F8FAFC;
+  --border-soft: #E9EEF4;
+
+  /* Pastilles d'icônes : fonds pastel + couleur d'icône assortie */
+  --tint-blue-bg: #E8EEF9;
+  --tint-blue-fg: #16437B;
+  --tint-amber-bg: #FFF3D4;
+  --tint-amber-fg: #A16207;
+  --tint-emerald-bg: #E3F6EE;
+  --tint-emerald-fg: #047857;
+  --tint-sky-bg: #E4F1FB;
+  --tint-sky-fg: #0369A1;
+  --tint-violet-bg: #EDEBFA;
+  --tint-violet-fg: #4C3FBF;
 }
 
 body {
   background-color: var(--color-brand-gray);
   color: var(--color-brand-blue);
-  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Fond général très clair, légèrement dégradé (inspiré de la référence) */
+.app-surface {
+  background:
+    radial-gradient(1100px 520px at 8% -8%, #EFF4FB 0%, rgba(239, 244, 251, 0) 60%),
+    radial-gradient(900px 480px at 100% 0%, #FDF6E3 0%, rgba(253, 246, 227, 0) 55%),
+    var(--color-brand-gray);
+}
+
+/* Carte standard : bord discret + ombre très douce */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 16px;
+  box-shadow: 0 1px 2px rgba(11, 37, 69, 0.04), 0 8px 24px -12px rgba(11, 37, 69, 0.10);
+}
+
+/* Pastille d'icône (carré arrondi coloré) */
+.icon-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  flex-shrink: 0;
 }
 
 /* petite scrollbar plus discrète */
@@ -22,6 +68,9 @@ body {
 ::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
 /* --- Animation de l'écran d'accueil (SplashScreen) --- */

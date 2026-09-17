@@ -1,5 +1,5 @@
 """
-Point d'entrée de l'API FastAPI — ProspectAI.
+Point d'entrée de l'API FastAPI — Miabé Prospect.
 Pour lancer : uvicorn app.main:app --reload
 """
 from fastapi import FastAPI
@@ -9,7 +9,7 @@ from .database import Base, engine
 from .routers import prospects, followups, pipeline, dashboard, ai, auth, import_router
 
 app = FastAPI(
-    title="ProspectAI API",
+    title="Miabé Prospect API",
     description="Plateforme intelligente de prospection commerciale (prototype hackathon).",
     version="0.1.0",
 )
@@ -60,7 +60,7 @@ app.include_router(ai.router)
 
 @app.get("/", tags=["Santé"])
 def root():
-    return {"status": "ok", "service": "ProspectAI API"}
+    return {"status": "ok", "service": "Miabé Prospect API"}
 
 
 @app.get("/health", tags=["Santé"])
