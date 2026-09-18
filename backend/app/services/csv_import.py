@@ -3,10 +3,15 @@ Logique d'import CSV partagée entre :
   - app/import_data.py (import initial des données de démo, au démarrage)
   - app/routers/import_router.py (upload par une entreprise depuis l'interface)
 
-Chaque fonction prend un DataFrame pandas déjà chargé + l'id de l'entreprise
-concernée, et scope toutes les requêtes/insertions à cette entreprise — c'est
-ce qui permet à plusieurs entreprises d'utiliser la plateforme sans jamais
-voir les données des autres.
+Chaque fonction prend une liste de lignes (dictionnaires colonne -> valeur)
++ l'id de l'entreprise concernée, et scope toutes les requêtes/insertions à
+cette entreprise — c'est ce qui permet à plusieurs entreprises d'utiliser la
+plateforme sans jamais voir les données des autres.
+
+Volontairement sans pandas : cette logique tourne au démarrage du serveur, et
+importer pandas coûterait plusieurs secondes à chaque réveil de l'hébergement
+gratuit. Les uploads utilisateurs, eux, passent toujours par pandas (lecture
+plus tolérante), qui n'est chargé qu'à ce moment-là.
 
 Colonnes attendues (mêmes noms que les fichiers CSV fournis pour le
 hackathon) :
@@ -20,15 +25,17 @@ hackathon) :
   - historique : secteur, prospects_contactes, reponses, rendez_vous,
                  propositions_envoyees, conversions
 """
-import pandas as pd
 from sqlalchemy.orm import Session
 
 from .. import models
 
 
 def _clean(value):
-    """Convertit les NaN pandas en None, et strippe les chaînes."""
-    if pd.isna(value):
+    """Normalise une valeur brute : NaN/vide -> None, chaînes strippées."""
+    if value is None:
+        return None
+    # NaN (float) est la seule valeur qui n'est pas égale à elle-même
+    if isinstance(value, float) and value != value:
         return None
     if isinstance(value, str):
         value = value.strip()
@@ -56,12 +63,10 @@ def _to_float(value):
         return None
 
 
-def import_prospects_df(df: pd.DataFrame, company_id: int, db: Session) -> int:
-    df = df.drop_duplicates(subset=["prospect_id"], keep="first")
-
+def import_prospects_df(rows, company_id: int, db: Session) -> int:
     seen_in_run = set()
     count = 0
-    for _, row in df.iterrows():
+    for row in rows:
         external_id = _clean(row.get("prospect_id"))
         if not external_id or external_id in seen_in_run:
             continue
@@ -99,9 +104,9 @@ def import_prospects_df(df: pd.DataFrame, company_id: int, db: Session) -> int:
     return count
 
 
-def import_clients_df(df: pd.DataFrame, company_id: int, db: Session) -> int:
+def import_clients_df(rows, company_id: int, db: Session) -> int:
     count = 0
-    for _, row in df.iterrows():
+    for row in rows:
         external_id = _clean(row.get("client_id"))
         if not external_id:
             continue
@@ -128,9 +133,9 @@ def import_clients_df(df: pd.DataFrame, company_id: int, db: Session) -> int:
     return count
 
 
-def import_offers_df(df: pd.DataFrame, company_id: int, db: Session) -> int:
+def import_offers_df(rows, company_id: int, db: Session) -> int:
     count = 0
-    for _, row in df.iterrows():
+    for row in rows:
         external_id = _clean(row.get("offre_id"))
         if not external_id:
             continue
@@ -155,12 +160,12 @@ def import_offers_df(df: pd.DataFrame, company_id: int, db: Session) -> int:
     return count
 
 
-def import_sector_stats_df(df: pd.DataFrame, company_id: int, db: Session) -> int:
+def import_sector_stats_df(rows, company_id: int, db: Session) -> int:
     # on repart de zéro pour cette table à chaque (ré)import, pour cette entreprise
     db.query(models.SectorStat).filter_by(company_id=company_id).delete()
 
     count = 0
-    for _, row in df.iterrows():
+    for row in rows:
         sector = _clean(row.get("secteur"))
         if not sector:
             continue
@@ -181,7 +186,7 @@ def import_sector_stats_df(df: pd.DataFrame, company_id: int, db: Session) -> in
     return count
 
 
-def import_interactions_df(df: pd.DataFrame, company_id: int, db: Session) -> int:
+def import_interactions_df(rows, company_id: int, db: Session) -> int:
     # map external prospect_id (ex: P014) -> id interne, pour CETTE entreprise
     prospects_by_external = {
         p.external_id: p.id
@@ -189,7 +194,7 @@ def import_interactions_df(df: pd.DataFrame, company_id: int, db: Session) -> in
     }
 
     count = 0
-    for _, row in df.iterrows():
+    for row in rows:
         interaction_id = _clean(row.get("interaction_id"))
         prospect_external_id = _clean(row.get("prospect_id"))
         if not interaction_id or prospect_external_id not in prospects_by_external:

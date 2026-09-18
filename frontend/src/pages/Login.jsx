@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../AuthContext";
 import { BRAND } from "../brand";
+import WakingNotice from "../components/WakingNotice";
 
 const SECTORS = [
   "Technologie / Informatique",
@@ -267,6 +268,8 @@ export default function Login() {
                 {error}
               </p>
             )}
+
+            {loading && <WakingNotice />}
 
             <button
               type="submit"

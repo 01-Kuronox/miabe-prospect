@@ -6,7 +6,6 @@ avec son propre secteur, ses propres prospects et ses propres clients,
 au lieu des données togolaises de démonstration.
 """
 import io
-import pandas as pd
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from sqlalchemy.orm import Session
 
@@ -23,12 +22,24 @@ from ..services.csv_import import (
 router = APIRouter(prefix="/import", tags=["Import de données"])
 
 
-def _read_csv(file: UploadFile) -> pd.DataFrame:
+def _read_csv(file: UploadFile) -> list[dict]:
+    """
+    Lit le CSV envoyé par l'utilisateur et renvoie une liste de lignes.
+
+    pandas est importé ici (et non en haut du fichier) car il est lourd :
+    le charger au démarrage rallongerait de plusieurs secondes chaque réveil
+    du serveur sur l'hébergement gratuit, alors qu'il ne sert qu'aux uploads.
+    """
     if not file.filename.lower().endswith(".csv"):
         raise HTTPException(status_code=400, detail="Le fichier doit être au format CSV (.csv).")
     content = file.file.read()
     try:
-        return pd.read_csv(io.BytesIO(content), encoding="utf-8-sig")
+        import pandas as pd
+
+        df = pd.read_csv(io.BytesIO(content), encoding="utf-8-sig")
+        return df.where(df.notna(), None).to_dict("records")
+    except HTTPException:
+        raise
     except Exception as exc:
         raise HTTPException(status_code=400, detail=f"Impossible de lire ce fichier CSV : {exc}")
 
@@ -47,13 +58,13 @@ def import_prospects(
     Toutes les colonnes sont facultatives sauf `prospect_id` et `entreprise` —
     les autres peuvent être vides.
     """
-    df = _read_csv(file)
-    if "prospect_id" not in df.columns:
+    rows = _read_csv(file)
+    if rows and "prospect_id" not in rows[0]:
         raise HTTPException(
             status_code=400,
             detail="Colonne 'prospect_id' manquante dans le fichier — voir le modèle CSV.",
         )
-    count = import_prospects_df(df, company.id, db)
+    count = import_prospects_df(rows, company.id, db)
     return {"imported": count, "message": f"{count} nouveaux prospects importés."}
 
 
@@ -64,8 +75,8 @@ def import_clients(
     db: Session = Depends(get_db),
 ):
     """Colonnes attendues : client_id, entreprise, secteur, service_achete, montant_annuel_fcfa."""
-    df = _read_csv(file)
-    count = import_clients_df(df, company.id, db)
+    rows = _read_csv(file)
+    count = import_clients_df(rows, company.id, db)
     return {"imported": count, "message": f"{count} nouveaux clients importés."}
 
 
@@ -76,8 +87,8 @@ def import_offers(
     db: Session = Depends(get_db),
 ):
     """Colonnes attendues : offre_id, service, description."""
-    df = _read_csv(file)
-    count = import_offers_df(df, company.id, db)
+    rows = _read_csv(file)
+    count = import_offers_df(rows, company.id, db)
     return {"imported": count, "message": f"{count} offres importées."}
 
 
@@ -92,6 +103,6 @@ def import_sector_stats(
     propositions_envoyees, conversions. Utilisé par le moteur IA pour évaluer
     la performance historique de chaque secteur.
     """
-    df = _read_csv(file)
-    count = import_sector_stats_df(df, company.id, db)
+    rows = _read_csv(file)
+    count = import_sector_stats_df(rows, company.id, db)
     return {"imported": count, "message": f"{count} statistiques sectorielles importées."}

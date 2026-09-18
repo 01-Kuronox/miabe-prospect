@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { api } from "../api";
 import StatCard from "../components/StatCard";
+import WakingNotice from "../components/WakingNotice";
 
 export default function Dashboard() {
   const [data, setData] = useState(null);
@@ -59,7 +60,12 @@ export default function Dashboard() {
   }
 
   if (!data) {
-    return <div className="p-10 text-sm text-slate-400">Chargement du tableau de bord…</div>;
+    return (
+      <div className="mx-auto max-w-md p-10">
+        <p className="mb-4 text-sm text-slate-400">Chargement du tableau de bord…</p>
+        <WakingNotice />
+      </div>
+    );
   }
 
   return (

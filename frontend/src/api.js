@@ -44,6 +44,28 @@ async function request(path, options = {}) {
   return res.json();
 }
 
+/**
+ * Réveille le serveur au plus tôt.
+ *
+ * L'hébergement gratuit met l'API en veille après 15 minutes sans visite ;
+ * elle met alors ~50 s à redémarrer. En envoyant cette requête dès l'ouverture
+ * de la page (pendant l'écran d'accueil), le réveil démarre pendant que
+ * l'utilisateur regarde l'animation et saisit ses identifiants, au lieu de
+ * commencer seulement au moment de la connexion.
+ */
+export function warmUp() {
+  return fetch(`${API_URL}/health`, { cache: "no-store" }).catch(() => {});
+}
+
+/**
+ * Maintient l'API éveillée tant que l'application reste ouverte dans un onglet
+ * (utile pendant une démonstration : le serveur ne se rendort jamais).
+ */
+export function startKeepAlive(intervalMs = 10 * 60 * 1000) {
+  const id = setInterval(warmUp, intervalMs);
+  return () => clearInterval(id);
+}
+
 export const api = {
   // Authentification / compte entreprise
   register: (payload) =>

@@ -7,7 +7,7 @@ Usage :
     python -m app.import_data
 """
 import os
-import pandas as pd
+import csv
 
 from .database import Base, engine, SessionLocal
 from . import models
@@ -21,6 +21,13 @@ from .services.csv_import import (
 )
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
+
+
+def read_csv(filename):
+    """Lit un CSV du dossier data/ et renvoie une liste de dictionnaires."""
+    path = os.path.join(DATA_DIR, filename)
+    with open(path, newline="", encoding="utf-8-sig") as f:
+        return list(csv.DictReader(f))
 
 DEMO_COMPANY_EMAIL = "demo@prospectai.local"
 DEMO_COMPANY_NAME = "Entreprise Démo — PME Togo"
@@ -52,21 +59,11 @@ def run_import():
     try:
         company = get_or_create_demo_company(db)
 
-        prospects_df = pd.read_csv(
-            os.path.join(DATA_DIR, "01_Prospection_prospects.csv"), encoding="utf-8-sig"
-        )
-        clients_df = pd.read_csv(
-            os.path.join(DATA_DIR, "01_Prospection_clients.csv"), encoding="utf-8-sig"
-        )
-        offers_df = pd.read_csv(
-            os.path.join(DATA_DIR, "01_Prospection_offres_services.csv"), encoding="utf-8-sig"
-        )
-        stats_df = pd.read_csv(
-            os.path.join(DATA_DIR, "01_Prospection_historique.csv"), encoding="utf-8-sig"
-        )
-        interactions_df = pd.read_csv(
-            os.path.join(DATA_DIR, "01_Prospection_interactions.csv"), encoding="utf-8-sig"
-        )
+        prospects_df = read_csv("01_Prospection_prospects.csv")
+        clients_df = read_csv("01_Prospection_clients.csv")
+        offers_df = read_csv("01_Prospection_offres_services.csv")
+        stats_df = read_csv("01_Prospection_historique.csv")
+        interactions_df = read_csv("01_Prospection_interactions.csv")
 
         n_prospects = import_prospects_df(prospects_df, company.id, db)
         n_clients = import_clients_df(clients_df, company.id, db)
