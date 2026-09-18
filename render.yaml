@@ -9,5 +9,14 @@ services:
     envVars:
       - key: AI_PROVIDER
         value: none
+      # L'adresse de la base se règle dans le tableau de bord Render, pas ici :
+      # elle contient un mot de passe et ne doit donc pas être écrite dans le
+      # dépôt. « sync: false » indique à Render de ne pas écraser la valeur
+      # saisie à la main lors d'un redéploiement.
+      #
+      # ⚠️ Elle doit pointer vers un PostgreSQL (Neon, Supabase…). Le plan
+      # gratuit de Render remet le disque à zéro à chaque mise en veille : une
+      # base SQLite y perdrait toutes les données au bout de 15 minutes
+      # d'inactivité.
       - key: DATABASE_URL
-        value: sqlite:///./prospectai.db
+        sync: false
