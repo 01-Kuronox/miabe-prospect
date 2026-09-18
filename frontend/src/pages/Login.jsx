@@ -13,10 +13,12 @@ import {
   Briefcase,
   ArrowRight,
   ShieldCheck,
+  Headset,
 } from "lucide-react";
 import { useAuth } from "../AuthContext";
 import { BRAND } from "../brand";
 import WakingNotice from "../components/WakingNotice";
+import ContactModal from "../components/ContactModal";
 
 const SECTORS = [
   "Technologie / Informatique",
@@ -45,6 +47,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [contactOpen, setContactOpen] = useState(false);
 
   const [form, setForm] = useState({
     name: "",
@@ -81,6 +84,7 @@ export default function Login() {
     "w-full rounded-xl border border-[var(--border-soft)] bg-white py-3 pl-11 pr-4 text-sm text-slate-800 placeholder:text-slate-400 transition-shadow focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-blue)]/15 focus:border-[var(--color-brand-blue)]/30";
 
   return (
+    <>
     <div className="min-h-screen grid lg:grid-cols-[1.05fr_1fr]">
       {/* ---------- Panneau gauche : présentation ---------- */}
       <div className="relative hidden lg:flex flex-col justify-between overflow-hidden bg-[var(--color-brand-blue)] px-14 py-12 text-white">
@@ -92,9 +96,14 @@ export default function Login() {
             <img src={BRAND.logoIcon} alt={BRAND.name} className="h-11 w-11 rounded-xl" />
             <p className="text-lg font-bold tracking-tight">{BRAND.name}</p>
           </div>
-          <span className="rounded-full border border-white/15 px-3.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-white/60">
-            Espace commercial
-          </span>
+          <button
+            type="button"
+            onClick={() => setContactOpen(true)}
+            className="flex items-center gap-2 rounded-full border border-white/15 px-3.5 py-1.5 text-[11px] font-semibold text-white/70 transition-colors hover:border-[var(--color-brand-yellow)]/40 hover:bg-white/[0.06] hover:text-white"
+          >
+            <Headset size={14} strokeWidth={2.1} />
+            Nous contacter
+          </button>
         </div>
 
         <div className="relative max-w-xl">
@@ -138,9 +147,19 @@ export default function Login() {
       {/* ---------- Panneau droit : formulaire ---------- */}
       <div className="app-surface flex items-center justify-center px-6 py-12">
         <div className="w-full max-w-[380px]">
-          <div className="mb-10 flex items-center gap-3 lg:hidden">
-            <img src={BRAND.logoIcon} alt={BRAND.name} className="h-10 w-10 rounded-xl" />
-            <p className="text-lg font-bold text-[var(--color-brand-blue)]">{BRAND.name}</p>
+          <div className="mb-10 flex items-center justify-between gap-3 lg:hidden">
+            <div className="flex items-center gap-3">
+              <img src={BRAND.logoIcon} alt={BRAND.name} className="h-10 w-10 rounded-xl" />
+              <p className="text-lg font-bold text-[var(--color-brand-blue)]">{BRAND.name}</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setContactOpen(true)}
+              className="flex shrink-0 items-center gap-1.5 rounded-full border border-[var(--border-soft)] bg-white px-3 py-1.5 text-[11px] font-semibold text-[var(--color-brand-blue)] transition-colors hover:border-[var(--color-brand-blue)]/25 hover:bg-slate-50"
+            >
+              <Headset size={13} strokeWidth={2.2} />
+              Contact
+            </button>
           </div>
 
           <p className="mb-2 text-sm text-slate-500">
@@ -290,11 +309,26 @@ export default function Login() {
             </button>
           </form>
 
-          <p className="mt-8 text-center text-[11px] leading-relaxed text-slate-400">
-            Vos prospects, vos offres et vos statistiques restent strictement privés.
-          </p>
+          <div className="mt-8 border-t border-[var(--border-soft)] pt-5 text-center">
+            <p className="text-[12.5px] text-slate-500">
+              Vous représentez une entreprise ?{" "}
+              <button
+                type="button"
+                onClick={() => setContactOpen(true)}
+                className="font-semibold text-[var(--color-brand-blue)] underline-offset-4 hover:underline"
+              >
+                Contactez-nous
+              </button>
+            </p>
+            <p className="mt-3 text-[11px] leading-relaxed text-slate-400">
+              Vos prospects, vos offres et vos statistiques restent strictement privés.
+            </p>
+          </div>
         </div>
       </div>
     </div>
+
+    <ContactModal open={contactOpen} onClose={() => setContactOpen(false)} />
+    </>
   );
 }

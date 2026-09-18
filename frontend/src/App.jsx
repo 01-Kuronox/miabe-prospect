@@ -13,6 +13,7 @@ import Pipeline from "./pages/Pipeline";
 import FollowUps from "./pages/FollowUps";
 import Assistant from "./pages/Assistant";
 import Import from "./pages/Import";
+import Contact from "./pages/Contact";
 
 function AppRoutes() {
   const { company, loading } = useAuth();
@@ -43,6 +44,7 @@ function AppRoutes() {
           <Route path="/relances" element={<FollowUps />} />
           <Route path="/assistant" element={<Assistant />} />
           <Route path="/import" element={<Import />} />
+          <Route path="/contact" element={<Contact />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

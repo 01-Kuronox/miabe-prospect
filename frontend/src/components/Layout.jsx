@@ -6,6 +6,7 @@ import {
   BellRing,
   Sparkles,
   Upload,
+  Headset,
   LogOut,
 } from "lucide-react";
 import { BRAND } from "../brand";
@@ -18,6 +19,7 @@ const navItems = [
   { to: "/relances", label: "Relances", Icon: BellRing },
   { to: "/assistant", label: "Assistant IA", Icon: Sparkles },
   { to: "/import", label: "Mes données", Icon: Upload },
+  { to: "/contact", label: "Contact", Icon: Headset },
 ];
 
 export default function Layout() {
