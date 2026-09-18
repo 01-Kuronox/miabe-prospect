@@ -49,7 +49,7 @@ export default function Prospects() {
   };
 
   return (
-    <div className="mx-auto max-w-6xl p-8 lg:p-10">
+    <div className="mx-auto max-w-6xl p-4 sm:p-6 lg:p-10">
       <div className="mb-7 flex items-start gap-3">
         <span
           className="icon-chip h-10 w-10"
@@ -67,8 +67,10 @@ export default function Prospects() {
         </div>
       </div>
 
-      <form onSubmit={handleFilter} className="flex flex-wrap gap-3 mb-6">
-        <div className="relative min-w-[240px] flex-1">
+      <form onSubmit={handleFilter} className="mb-6 flex flex-wrap gap-2.5 sm:gap-3">
+        {/* basis-full : sur téléphone la recherche occupe sa propre ligne, sinon
+            les deux listes déroulantes deviennent trop étroites pour être lues. */}
+        <div className="relative min-w-[200px] flex-1 basis-full sm:basis-0">
           <Search
             size={16}
             className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
@@ -83,7 +85,7 @@ export default function Prospects() {
         <select
           value={sector}
           onChange={(e) => setSector(e.target.value)}
-          className="rounded-xl border border-[var(--border-soft)] bg-white px-3.5 py-2.5 text-sm text-slate-700 focus:border-[var(--color-brand-blue)]/30 focus:outline-none"
+          className="min-w-0 flex-1 rounded-xl border border-[var(--border-soft)] bg-white px-3 py-2.5 text-sm text-slate-700 focus:border-[var(--color-brand-blue)]/30 focus:outline-none sm:flex-none sm:px-3.5"
         >
           <option value="">Tous les secteurs</option>
           {sectors.map((s) => (
@@ -93,7 +95,7 @@ export default function Prospects() {
         <select
           value={status}
           onChange={(e) => setStatus(e.target.value)}
-          className="rounded-xl border border-[var(--border-soft)] bg-white px-3.5 py-2.5 text-sm text-slate-700 focus:border-[var(--color-brand-blue)]/30 focus:outline-none"
+          className="min-w-0 flex-1 rounded-xl border border-[var(--border-soft)] bg-white px-3 py-2.5 text-sm text-slate-700 focus:border-[var(--color-brand-blue)]/30 focus:outline-none sm:flex-none sm:px-3.5"
         >
           <option value="">Tous les statuts</option>
           {STATUSES.map((s) => (
@@ -102,7 +104,7 @@ export default function Prospects() {
         </select>
         <button
           type="submit"
-          className="inline-flex items-center gap-2 rounded-xl bg-[var(--color-brand-blue)] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--color-brand-blue-light)]"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--color-brand-blue)] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--color-brand-blue-light)] sm:w-auto"
         >
           <SlidersHorizontal size={15} strokeWidth={2.2} />
           Filtrer
@@ -111,7 +113,44 @@ export default function Prospects() {
 
       {error && <p className="text-red-600 text-sm mb-4">{error}</p>}
 
-      <div className="card overflow-hidden">
+      {/* Téléphone : une carte par prospect — un tableau à six colonnes est
+          illisible sous 640 px et force un défilement horizontal. */}
+      <div className="space-y-2.5 md:hidden">
+        {loading ? (
+          <p className="py-6 text-center text-sm text-slate-400">Chargement…</p>
+        ) : prospects.length === 0 ? (
+          <p className="py-6 text-center text-sm text-slate-400">
+            Aucun prospect ne correspond à ces filtres.
+          </p>
+        ) : (
+          prospects.map((p) => (
+            <Link
+              key={p.id}
+              to={`/prospects/${p.id}`}
+              className="card block p-4 transition-colors active:bg-[var(--surface-muted)]"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="truncate font-semibold text-[var(--color-brand-blue)]">
+                    {p.company_name}
+                  </p>
+                  <p className="mt-0.5 truncate text-[12.5px] text-slate-500">
+                    {[p.sector, p.location].filter(Boolean).join(" · ") || "—"}
+                  </p>
+                </div>
+                <ScorePill score={p.score} />
+              </div>
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                <PriorityBadge priority={p.priority} />
+                <StatusBadge status={p.status} />
+              </div>
+            </Link>
+          ))
+        )}
+      </div>
+
+      {/* Ordinateur et tablette : le tableau complet, inchangé. */}
+      <div className="card hidden overflow-hidden md:block">
         <table className="w-full text-sm">
           <thead className="border-b border-[var(--border-soft)] bg-[var(--surface-muted)] text-[11px] uppercase tracking-wide text-slate-500">
             <tr>

@@ -145,7 +145,7 @@ function ImportCard({ type }) {
 
 export default function Import() {
   return (
-    <div className="mx-auto max-w-4xl p-8 lg:p-10">
+    <div className="mx-auto max-w-4xl p-4 sm:p-6 lg:p-10">
       <div className="mb-8 flex items-start gap-3">
         <span
           className="icon-chip h-10 w-10"

@@ -21,7 +21,7 @@ export default function Pipeline() {
   if (!pipeline) return <div className="p-8 text-slate-500">Chargement…</div>;
 
   return (
-    <div className="p-8 lg:p-10">
+    <div className="p-4 sm:p-6 lg:p-10">
       <div className="mb-7 flex items-start gap-3">
         <span
           className="icon-chip h-10 w-10"

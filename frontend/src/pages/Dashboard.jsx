@@ -69,7 +69,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl p-8 lg:p-10">
+    <div className="mx-auto max-w-6xl p-4 sm:p-6 lg:p-10">
       {/* En-tête */}
       <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
         <div>

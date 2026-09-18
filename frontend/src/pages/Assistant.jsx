@@ -46,8 +46,10 @@ export default function Assistant() {
     }
   };
 
+  // Sur téléphone, la barre du haut occupe 57 px : sans cette soustraction,
+  // le champ de saisie tomberait sous le bas de l'écran.
   return (
-    <div className="mx-auto flex h-screen max-w-3xl flex-col p-8 lg:p-10">
+    <div className="mx-auto flex h-[calc(100dvh-57px)] max-w-3xl flex-col p-4 sm:p-6 lg:h-screen lg:p-10">
       <div className="mb-5 flex items-start gap-3">
         <span
           className="icon-chip h-10 w-10"

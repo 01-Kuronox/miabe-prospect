@@ -115,13 +115,13 @@ export default function ProspectDetail() {
   }
 
   return (
-    <div className="p-8 max-w-5xl">
+    <div className="max-w-5xl p-4 sm:p-6 lg:p-8">
       <Link to="/prospects" className="text-sm text-slate-500 hover:underline">
         ← Retour aux prospects
       </Link>
 
-      <div className="mt-3 flex items-start justify-between">
-        <div>
+      <div className="mt-3 flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0">
           <h1 className="text-2xl font-black text-[var(--color-brand-blue)]">
             {prospect.company_name}
           </h1>
@@ -129,25 +129,25 @@ export default function ProspectDetail() {
             {prospect.sector || "Secteur inconnu"} · {prospect.location || "Ville inconnue"}
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex shrink-0 items-center gap-3">
           <ScorePill score={prospect.score} />
           <PriorityBadge priority={prospect.priority} />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+      <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-3">
         {/* Colonne infos */}
         <div className="md:col-span-1 space-y-6">
           <div className="card p-5">
             <h2 className="mb-3 font-bold tracking-tight text-[var(--color-brand-blue)]">Informations</h2>
             <dl className="text-sm space-y-2">
-              <div className="flex justify-between"><dt className="text-slate-500">Contact</dt><dd>{prospect.contact_name || "—"}</dd></div>
-              <div className="flex justify-between"><dt className="text-slate-500">Fonction</dt><dd>{prospect.contact_role || "—"}</dd></div>
-              <div className="flex justify-between"><dt className="text-slate-500">Email</dt><dd className="truncate max-w-[150px]">{prospect.email || "—"}</dd></div>
-              <div className="flex justify-between"><dt className="text-slate-500">Canal préféré</dt><dd>{prospect.preferred_channel || "—"}</dd></div>
-              <div className="flex justify-between"><dt className="text-slate-500">Besoin</dt><dd>{prospect.need || "—"}</dd></div>
-              <div className="flex justify-between"><dt className="text-slate-500">Taille</dt><dd>{prospect.size ? `${prospect.size} employés` : "—"}</dd></div>
-              <div className="flex justify-between"><dt className="text-slate-500">Prochaine relance</dt><dd>{prospect.next_follow_up_date || "—"}</dd></div>
+              <div className="flex justify-between gap-3"><dt className="shrink-0 text-slate-500">Contact</dt><dd>{prospect.contact_name || "—"}</dd></div>
+              <div className="flex justify-between gap-3"><dt className="shrink-0 text-slate-500">Fonction</dt><dd>{prospect.contact_role || "—"}</dd></div>
+              <div className="flex justify-between gap-3"><dt className="shrink-0 text-slate-500">Email</dt><dd className="truncate">{prospect.email || "—"}</dd></div>
+              <div className="flex justify-between gap-3"><dt className="shrink-0 text-slate-500">Canal préféré</dt><dd>{prospect.preferred_channel || "—"}</dd></div>
+              <div className="flex justify-between gap-3"><dt className="shrink-0 text-slate-500">Besoin</dt><dd>{prospect.need || "—"}</dd></div>
+              <div className="flex justify-between gap-3"><dt className="shrink-0 text-slate-500">Taille</dt><dd>{prospect.size ? `${prospect.size} employés` : "—"}</dd></div>
+              <div className="flex justify-between gap-3"><dt className="shrink-0 text-slate-500">Prochaine relance</dt><dd>{prospect.next_follow_up_date || "—"}</dd></div>
             </dl>
           </div>
 
