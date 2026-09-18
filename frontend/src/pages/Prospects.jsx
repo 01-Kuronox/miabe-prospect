@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Search, Building2, SlidersHorizontal } from "lucide-react";
 import { api } from "../api";
 import { StatusBadge, PriorityBadge, ScorePill } from "../components/Badge";
+import LoadError from "../components/LoadError";
 
 const STATUSES = [
   "Nouveau", "Qualifié", "Contacté", "En discussion",
@@ -20,6 +21,7 @@ export default function Prospects() {
 
   const load = () => {
     setLoading(true);
+    setError(null);
     api
       .listProspects({ search, sector, status, limit: 300 })
       .then((data) => {
@@ -34,6 +36,12 @@ export default function Prospects() {
   };
 
   useEffect(load, []);
+
+  // Échec du tout premier chargement : la page n'a rien à montrer, on affiche
+  // l'écran de secours plutôt qu'un tableau vide surmonté d'un texte rouge.
+  if (error && prospects.length === 0) {
+    return <LoadError message={error} onRetry={load} />;
+  }
 
   const handleFilter = (e) => {
     e.preventDefault();

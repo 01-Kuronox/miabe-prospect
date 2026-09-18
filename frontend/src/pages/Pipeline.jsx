@@ -2,17 +2,22 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Workflow } from "lucide-react";
 import { api } from "../api";
+import LoadError from "../components/LoadError";
 import { ScorePill } from "../components/Badge";
 
 export default function Pipeline() {
   const [pipeline, setPipeline] = useState(null);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
+  const load = () => {
+    setError(null);
+    setPipeline(null);
     api.getPipeline().then(setPipeline).catch((e) => setError(e.message));
-  }, []);
+  };
 
-  if (error) return <div className="p-8 text-red-600">{error}</div>;
+  useEffect(load, []);
+
+  if (error) return <LoadError message={error} onRetry={load} />;
   if (!pipeline) return <div className="p-8 text-slate-500">Chargement…</div>;
 
   return (

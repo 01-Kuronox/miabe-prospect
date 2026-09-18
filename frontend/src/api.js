@@ -1,4 +1,14 @@
-const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
+/**
+ * Adresse de l'API.
+ *
+ *  - En ligne (Vercel)   : VITE_API_URL pointe vers le serveur Render.
+ *  - En version locale   : aucune variable n'est définie et le site est servi
+ *                          par le backend lui-même → adresses relatives, donc
+ *                          aucun réseau externe nécessaire.
+ *  - En développement    : le serveur Vite tourne sur un autre port que l'API.
+ */
+const API_URL =
+  import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://127.0.0.1:8000" : "");
 const TOKEN_KEY = "prospectai_token";
 
 // --- Gestion du jeton d'authentification (stocké côté navigateur) ---
@@ -12,6 +22,48 @@ export function clearToken() {
   localStorage.removeItem(TOKEN_KEY);
 }
 
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+// Délais entre les tentatives (l'hébergement gratuit met ~50 s à se réveiller)
+const RETRY_DELAYS = [1500, 3000, 5000, 8000];
+
+/**
+ * fetch qui réessaie au lieu d'abandonner à la première erreur.
+ *
+ * Deux cas sont retentés :
+ *   - l'erreur réseau (fetch qui échoue) : serveur endormi, wifi qui cligne ;
+ *   - les codes 502 / 503 / 504 : l'hébergeur répond à la place du serveur
+ *     pendant qu'il redémarre.
+ *
+ * Seules les lectures (GET) sont retentées : rejouer un POST pourrait créer
+ * deux fois la même relance ou le même prospect.
+ */
+async function fetchWithRetry(url, options) {
+  const method = (options.method || "GET").toUpperCase();
+  const canRetry = method === "GET";
+  const attempts = canRetry ? RETRY_DELAYS.length : 0;
+
+  for (let i = 0; ; i++) {
+    try {
+      const res = await fetch(url, options);
+      if ([502, 503, 504].includes(res.status) && i < attempts) {
+        await sleep(RETRY_DELAYS[i]);
+        continue;
+      }
+      return res;
+    } catch (err) {
+      if (i < attempts) {
+        await sleep(RETRY_DELAYS[i]);
+        continue;
+      }
+      throw new Error(
+        "Le serveur ne répond pas. S'il vient d'être mis en veille, il lui faut " +
+          "environ une minute pour redémarrer — réessayez dans quelques secondes."
+      );
+    }
+  }
+}
+
 async function request(path, options = {}) {
   const token = getToken();
   const headers = { ...(options.headers || {}) };
@@ -23,7 +75,7 @@ async function request(path, options = {}) {
     headers["Authorization"] = `Bearer ${token}`;
   }
 
-  const res = await fetch(`${API_URL}${path}`, { ...options, headers });
+  const res = await fetchWithRetry(`${API_URL}${path}`, { ...options, headers });
 
   if (res.status === 401) {
     // Jeton invalide/expiré : on déconnecte proprement.

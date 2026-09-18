@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { BellRing } from "lucide-react";
 import { api } from "../api";
+import LoadError from "../components/LoadError";
 
 export default function FollowUps() {
   const [followUps, setFollowUps] = useState([]);
@@ -36,7 +37,7 @@ export default function FollowUps() {
     load();
   };
 
-  if (error) return <div className="p-8 text-red-600">{error}</div>;
+  if (error) return <LoadError message={error} onRetry={load} />;
 
   const today = new Date().toISOString().slice(0, 10);
 
